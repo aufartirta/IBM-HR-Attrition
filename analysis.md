@@ -96,6 +96,29 @@ Female|	14.80
 There is a slight difference in attrition rates between genders, with 17.01% of male employees experiencing attrition compared to 14.80% of female employees.
 
 ```sql
+-- Attrition percentage based on age group
+SELECT 
+	CASE
+        WHEN age >=18 AND age <=25 THEN '18-25 years old'
+		WHEN age >25 AND age <=40 THEN '25-40 years old'
+		WHEN age >40 AND age <=60 THEN '40-60 years old'
+        ELSE '>60 years'
+    END AS age_group,
+	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM hr_attrition
+GROUP BY age_group
+ORDER BY age_group;
+```
+Result:
+age_group|attritio_percentage
+---|---
+18-25 years old|	35.77
+25-40 years old|	15.99
+40-60 years old|	11.18
+
+Younger employees generally exhibit higher attrition rates. Those aged 18-25 have a significantly higher attrition rate of 35.77% compared to older age groups.
+
+```sql
 -- Attrition percentage based on job role
 SELECT
 	job_role,
@@ -154,17 +177,148 @@ GROUP BY job_involvement
 ORDER BY job_involvement;
 ```
 Result:
-job_involvment|attrition_percentage
+job_involvement|attrition_percentage
 ---|---
 1	33.73
 2	18.93
 3	14.40
 4	9.03
 
-Job involvment level is described as: </br>
+Job involvement level is described as: </br>
 1: Low </br>
 2: Medium </br>
 3: High </br>
 4: Very High </br>
 
 Employees with low job involvement level tend to have higher attrition rates (33.73% on 'Low' job involvement level). 
+
+```sql
+-- Attrition percentage based on job education level
+SELECT
+	education,
+	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM hr_attrition
+GROUP BY education
+ORDER BY education;
+```
+Result:
+education|attrition_percentage
+---|---
+1|	18.24
+2|	15.60
+3|	17.31
+4|	14.57
+5|	10.42
+
+Education level is described as: </br>
+1: Below College </br>
+2: College </br>
+3: Bachelor </br>
+4: Master </br>
+5: Doctor </br>
+
+Employees without a college degree show a slightly higher attrition rate (18.24%) compared to those with a college education. Notably, employees with a bachelor's degree also experience a relatively high attrition rate (17.31%), which may be attributed to their ongoing search for better career opportunities.
+
+```sql
+-- Attrition percentage based on income
+WITH IncomeQuartile AS(
+	SELECT
+    	NTILE(4) OVER (ORDER BY monthly_income) AS income_quartile,
+		attrition
+	FROM
+		hr_attrition
+)
+SELECT
+	income_quartile,
+    ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM IncomeQuartile
+GROUP BY income_quartile
+ORDER BY income_quartile;
+```
+Result:
+income_quartile|attrition_percentage
+---|---
+1|	29.35
+2|	14.13
+3|	10.63
+4|	10.35
+
+Employees with low income (1st quartile) tend to have higher attrition rates. On the contrary, higher income (3rd and 4th quartile) related to lower attrition rate.
+
+```sql
+-- Attrition percentage based on tenure
+SELECT 
+	CASE
+        WHEN years_at_company >=0 AND years_at_company <=2 THEN '0-2 years'
+		WHEN years_at_company >2 AND years_at_company <=5 THEN '2-5 years'
+		WHEN years_at_company >5 AND years_at_company <=8 THEN '5-8 years'
+		WHEN years_at_company >8 AND years_at_company <=10 THEN '8-10 years'
+        ELSE '>10 years'
+    END AS tenure,
+	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM hr_attrition
+GROUP BY tenure
+ORDER BY tenure;
+```
+Result:
+tenure|attrition_percentage
+---|---
+0-2 years|	29.82
+2-5 years|	13.82
+5-8 years|	11.79
+8-10 years|	12.87
+`>`10 years|	8.13
+
+As tenure increases, the attrition rate decreases. The longer an employee remains with the company, the less likely they are to leave. Newer employees have a higher attrition rate, with 29.82% leaving.
+
+```sql
+-- Attrition percentage based on job environment condition satisfaction
+SELECT
+	environment_satisfaction,
+	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM hr_attrition
+GROUP BY environment_satisfaction
+ORDER BY environment_satisfaction;
+```
+Result:
+environment_satisfaction|attrition_percentage
+---|---
+1|	25.35
+2|	14.98
+3|	13.69
+4|	13.45
+
+Environment satisfaction is described as: </br>
+1: Low </br>
+2: Medium </br>
+3: High </br>
+4: Very High </br>
+
+Low levels of environmental satisfaction result in higher attrition rates (25.35%). Conversely, higher levels of environmental satisfaction are associated with lower attrition rates (13.45%).
+
+```sql
+-- Attrition percentage based on work life balance
+SELECT
+	work_life_balance,
+	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM hr_attrition
+GROUP BY work_life_balance
+ORDER BY work_life_balance;
+```
+
+
+```sql
+-- Attrition percentage based on living distance
+SELECT 
+	CASE
+		WHEN distance_from_home >0 AND distance_from_home <=5 THEN '<5 km'
+		WHEN distance_from_home >5 AND distance_from_home <=10 THEN '5-10 km'
+		ELSE '>10 km'
+	END AS living_distance,
+	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM hr_attrition
+GROUP BY living_distance
+ORDER BY living_distance;
+```
+
+
