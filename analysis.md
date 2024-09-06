@@ -62,6 +62,7 @@ Male|	882|	60.00
 The gender composition is quite balanced, with 40% female employee and 60& male employee.
 
 ```sql
+-- Check income distribution
 SELECT 
     MAX(monthly_income) AS max_income,
     MIN(monthly_income) AS min_income,
@@ -80,6 +81,7 @@ Monthly income ranges from a minimum of 1,009 to a maximum of 19,999, with an av
 ### 2. Identifying Factors of Attrition
 
 ```sql
+-- Attrition percentage based on gender
 SELECT
 	gender,
 	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
