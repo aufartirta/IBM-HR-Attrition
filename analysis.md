@@ -390,7 +390,7 @@ ORDER BY age_group;
 ```
 Result:
 age_group|average_income|attrition_percentage
----|---
+---|---|---
 18-25 years old|	2972.89|35.77
 25-40 years old|	5396.52|15.99
 40-60 years old|	9535.31|11.18
