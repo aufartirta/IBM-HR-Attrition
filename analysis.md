@@ -386,12 +386,87 @@ FROM hr_attrition
 GROUP BY age_group
 ORDER BY age_group;
 ```
+Result:
 age_group|average_income|attrition_percentage
 ---|---
 18-25 years old|	2972.89|35.77
 25-40 years old|	5396.52|15.99
 40-60 years old|	9535.31|11.18
 
+Employees in younger age groups with lower incomes are more likely to leave the company, while those in older age groups, who earn more, are more likely to stay.
+
+```sql
+SELECT
+	job_role,
+	ROUND(AVG(age),2) AS average_age,
+	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM hr_attrition
+GROUP BY job_role
+ORDER BY attrition_percentage
+```
+Result:
+job_role|average_age|attrition_percentage
+---|---|---
+Research Director|	44.00|	2.50
+Manager|	46.76|	4.90
+Healthcare Representative|	39.81|	6.87
+Manufacturing Director|	38.30|	6.90
+Research Scientist|	34.24|	16.10
+Sales Executive|	36.89|	17.48
+Human Resources|	35.50|	23.08
+Laboratory Technician|	34.10|	23.94
+Sales Representative|	30.36|	39.76
+
+Roles with older employees, such as Research Directors and Managers, tend to have much lower attrition rates. These roles likely offer more job stability, higher pay, and long-term career satisfaction. Younger employees, especially in roles like Sales Representative and Laboratory Technician, face significantly higher attrition rates. These roles may be more transient, with employees looking for upward mobility or higher-paying opportunities. Technical and senior leadership roles like Research Director and Manager have lower attrition, while sales and support roles (Sales Representative, Human Resources) have much higher attrition, possibly due to job stress, performance pressures, or limited career progression.
+
+```sql
+SELECT 
+	job_role,
+	ROUND(AVG(job_involvement),2) AS involvement_level,
+	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM hr_attrition
+GROUP BY job_role
+ORDER BY involvement_level;
+```
+Result:
+job_role|involvement_level|atrition_percentage
+---|---|---
+Sales Representative|	2.65|	39.76
+Manufacturing Director|	2.68|	6.90
+Laboratory Technician|	2.69|	23.94
+Sales Executive|	2.71|	17.48
+Human Resources|	2.71|	23.08
+Healthcare Representative|	2.73|	6.87
+Manager|	2.77|	4.90
+Research Director|	2.78|	2.50
+Research Scientist|	2.80|	16.10
+
+There is generally a correlation between higher involvement levels and lower attrition rates. Employees who feel more engaged and connected to their roles tend to stay longer, as seen with Managers and Research Directors. Employees in roles like Sales Representative, Sales Executive, and Human Resources show low to moderate involvement levels and higher attrition rates, suggesting that improving engagement could help reduce turnover in these areas. In some cases, even roles with moderate involvement (e.g., Healthcare Representative, Manufacturing Director) still have low attrition, likely due to other factors like job security, seniority, or compensation. Conversely, Research Scientists, despite their high involvement, still show relatively high turnover, which could be due to external factors like career progression or job demands.
+
+```sql
+SELECT 
+	job_role,
+	ROUND(AVG(monthly_income),2) AS average_income,
+	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM hr_attrition
+GROUP BY job_role
+ORDER BY attrition_percentage;
+```
+Result:
+
+job_role|average_income|attrition_percentage
+---|---|---
+Research Director|	16033.55|	2.50
+Manager|	17181.68|	4.90
+Healthcare Representative|	7528.76|	6.87
+Manufacturing Director|	7295.14|	6.90
+Research Scientist|	3239.97|	16.10
+Sales Executive|	6924.28|	17.48
+Human Resources|	4235.75|	23.08
+Laboratory Technician|	3237.17|	23.94
+Sales Representative|	2626.00|	39.76
 
 
+There is a clear trend showing that higher income levels are associated with lower attrition rates. Employees in senior and well-compensated roles, such as Managers and Research Directors, tend to stay longer, while those in lower-paying roles, like Sales Representatives and Laboratory Technicians, have much higher turnover. Entry-Level Roles: Senior roles with higher responsibilities, such as Managers and Directors, have higher incomes and correspondingly low attrition rates. On the other hand, entry-level or lower-paying roles like Sales Representatives and Laboratory Technicians tend to have high attrition, likely due to lower job satisfaction, limited career growth, and inadequate compensation.
+Both Sales Representatives and Sales Executives have high attrition, even though Sales Executives earn more. This may indicate that sales roles, regardless of pay, often come with high job pressure and targets that drive turnover.
 
