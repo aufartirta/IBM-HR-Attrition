@@ -370,7 +370,7 @@ living_distance | attrition_percentage
 
 The living distance is divided into three categories: less than 5 km, 5-10 km, and more than 10 km. Employees who live farther from the office, particularly those residing more than 10 km away, experience a higher attrition rate (20.95%).
 
-### 3. Exploring Factors Affection Attrition Rates
+### 3. Exploring Factors Affecting Attrition Rates
 Based on the analysis, the top three factors most likely to influence employee attrition are **age, job role, and job involvement**. These factors will be examined in greater detail to gain a deeper understanding of how they interact with other variables contributing to employee attrition.
 
 ```sql
