@@ -272,6 +272,30 @@ tenure|attrition_percentage
 As tenure increases, the attrition rate decreases. The longer an employee remains with the company, the less likely they are to leave. Newer employees have a higher attrition rate, with 29.82% leaving.
 
 ```sql
+-- Attrition percentage based on professional experience
+SELECT 
+	CASE
+        WHEN total_working_years >=0 AND total_working_years <=5 THEN '0-5 years'
+		WHEN total_working_years >5 AND total_working_years <=10 THEN '5-10 years'
+		WHEN total_working_years >10 AND total_working_years <=20 THEN '10-20 years'
+        ELSE '>20 years'
+    END AS professional_experience,
+	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM hr_attrition
+GROUP BY professional_experience
+ORDER BY attrition_percentage DESC
+```
+Result:
+professional_experience|attrition_percentage
+---|---
+0-5 years|	28.80
+5-10 years|	14.99
+10-20 years|	11.47
+`>`20 years|	7.73
+
+The more professional experience an employee has, the lower their attrition rate becomes, with those having over 20 years of experience showing an attrition rate of just 7.73%. In contrast, employees who are early in their careers (0-5 years of experience) have a much higher attrition rate of 28.80%.
+
+```sql
 -- Attrition percentage based on job environment condition satisfaction
 SELECT
 	environment_satisfaction,
@@ -305,6 +329,21 @@ FROM hr_attrition
 GROUP BY work_life_balance
 ORDER BY work_life_balance;
 ```
+Result:
+work_life_balance|attrition_percentage
+---|---
+1	|31.25
+2	|16.86
+3	|14.22
+4	|17.65
+
+Work-life balance is described as: <\br>
+1: Bad <\br>
+2: Good <\br>
+3: Better <\br>
+4: Best <\br>
+
+Poor work-life balance is associated with a higher attrition rate (31.25%). In contrast, good to excellent work-life balance conditions result in comparatively lower attrition rates.
 
 
 ```sql
@@ -320,5 +359,39 @@ FROM hr_attrition
 GROUP BY living_distance
 ORDER BY living_distance;
 ```
+Result:
+living_distance | attrition_percentage
+---|---
+<5 km|	13.77
+5-10 km|	14.47
+`>`10 km|	20.95
+
+The living distance is divided into three categories: less than 5 km, 5-10 km, and more than 10 km. Employees who live farther from the office, particularly those residing more than 10 km away, experience a higher attrition rate (20.95%).
+
+### 3. Exploring Factors Affection Attrition Rates
+Based on the analysis, the top three factors most likely to influence employee attrition are **age, job role, and job involvement**. These factors will be examined in greater detail to gain a deeper understanding of how they interact with other variables contributing to employee attrition.
+
+```sql
+---Age Group vs Income
+SELECT 
+	CASE
+        WHEN age >=18 AND age <=25 THEN '18-25 years old'
+		WHEN age >25 AND age <=40 THEN '25-40 years old'
+		WHEN age >40 AND age <=60 THEN '40-60 years old'
+        ELSE '>60 years'
+    END AS age_group,
+	ROUND(AVG(monthly_income),2) AS average_income,
+	ROUND((COUNT(CASE WHEN attrition = 'Yes' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attrition_percentage
+FROM hr_attrition
+GROUP BY age_group
+ORDER BY age_group;
+```
+age_group|average_income|attrition_percentage
+---|---
+18-25 years old|	2972.89|35.77
+25-40 years old|	5396.52|15.99
+40-60 years old|	9535.31|11.18
+
+
 
 
